@@ -81,11 +81,12 @@ function App() {
   return (
     <div>
       <SearchBar onSearch={handelSearch} />
-      {error && <ErrorMessage />}
+
       {images.length > 0 && (
         <ImageGallery arr={images} toOpenModal={openModal} />
       )}
       {loading && <Loader />}
+      {error && <ErrorMessage />}
       {pages > 1 && pages !== click && (
         <LoadMoreBtn handelClick={handelClickLoad} />
       )}
