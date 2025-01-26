@@ -1,8 +1,8 @@
 import s from './LoadMoreBtn.module.css';
 
-const LoadMoreBtn = ({ handelClick }) => {
+const LoadMoreBtn = ({ handleClick }) => {
   return (
-    <button className={s.load} onClick={handelClick}>
+    <button className={s.load} onClick={handleClick}>
       Load more
     </button>
   );

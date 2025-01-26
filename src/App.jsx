@@ -19,15 +19,18 @@ function App() {
   const [pages, setPages] = useState(0);
   const [modalIsOpen, setIsOpen] = useState(false);
   const [imageForModal, setImageForModal] = useState({});
+
   function openModal(item) {
-    setIsOpen(true);
+    if (!modalIsOpen) {
+      setIsOpen(true);
+    }
     setImageForModal(item);
   }
 
   function closeModal() {
     setIsOpen(false);
   }
-  const handelSearch = async (query, click) => {
+  const handleSearch = async (query, click) => {
     if (!query) {
       return;
     }
@@ -74,25 +77,28 @@ function App() {
     }
     fetchNextPage();
   }, [click, query, pages]);
-  const handelClickLoad = () => {
+  const handleClickLoad = () => {
     setClick(click + 1);
   };
 
   return (
     <div>
-      <SearchBar onSearch={handelSearch} />
+      <SearchBar onSearch={handleSearch} />
 
-      {images.length > 0 && (
-        <ImageGallery arr={images} toOpenModal={openModal} />
-      )}
+      {images.length > 0 && <ImageGallery arr={images} openModal={openModal} />}
       {loading && <Loader />}
       {error && <ErrorMessage />}
       {pages > 1 && pages !== click && (
-        <LoadMoreBtn handelClick={handelClickLoad} />
+        <LoadMoreBtn handleClick={handleClickLoad} />
       )}
-      <Modal isOpen={modalIsOpen} onRequestClose={closeModal}>
-        <ImageModal image={imageForModal} closeModal={closeModal} />
-      </Modal>
+      {modalIsOpen && (
+        <ImageModal
+          image={imageForModal}
+          isOpen={modalIsOpen}
+          closeModal={closeModal}
+        />
+      )}
+
       <Toaster
         position="top-right"
         toastOptions={{

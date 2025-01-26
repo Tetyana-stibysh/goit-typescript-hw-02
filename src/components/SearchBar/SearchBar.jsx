@@ -6,19 +6,18 @@ const SearchBar = ({ onSearch }) => {
   const handelSubmit = e => {
     e.preventDefault();
     const { value } = e.target.elements.text;
+    if (!value) {
+      toast('Fill out the search form, please!!');
+      return;
+    }
     onSearch(value);
     e.target.reset();
   };
 
-  const notify = e => {
-    if (!e.currentTarget.nextSibling.value) {
-      toast('Fill out the search form, please!!');
-    }
-  };
   return (
     <header className={s.header}>
       <form className={s.wrapper} onSubmit={handelSubmit}>
-        <button className={s.button} type="submit" onClick={notify}>
+        <button className={s.button} type="submit">
           <TbPhotoSearch className={s.icon} />
         </button>
         <input
