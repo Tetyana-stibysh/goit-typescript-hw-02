@@ -1,6 +1,7 @@
 import s from './ImageModal.module.css';
 import { formatDistanceToNow } from 'date-fns';
 import Modal from 'react-modal';
+Modal.setAppElement('#root');
 const ImageModal = ({ image, closeModal, isOpen }) => {
   const {
     alt_description,

@@ -5,12 +5,9 @@ import ImageGallery from './components/ImageGallery/ImageGallery';
 import Loader from './components/Loader/Loader';
 import ErrorMessage from './components/ErrorMessage/ErrorMessage';
 import LoadMoreBtn from './components/LoadMoreBtn/LoadMoreBtn';
-import Modal from 'react-modal';
 import ImageModal from './components/ImageModal/ImageModal';
 import toast from 'react-hot-toast';
-import { set } from 'date-fns';
 
-Modal.setAppElement('#root');
 function App() {
   const [query, setQuery] = useState('');
   const [images, setImages] = useState([]);
@@ -33,11 +30,9 @@ function App() {
       try {
         setError(false);
         setLoading(true);
-        const response = await fetchData(query, page);
-        // const newImgs = response.results;
-        console.log(response);
-        setTotalPages(response.total_pages);
-        setImages(prev => [...prev, ...response.results]);
+        const { results, total_pages } = await fetchData(query, page);
+        setImages(prevImgs => [...prevImgs, ...results]);
+        setTotalPages(total_pages);
       } catch (error) {
         setError(true);
       } finally {
@@ -48,13 +43,13 @@ function App() {
       }
     };
     fetchImages();
-  }, [query, page, totalPages]);
+  }, [query, page]);
 
-  function openModal(item) {
+  function openModal(newItem) {
     if (!modalIsOpen) {
       setIsOpen(true);
     }
-    setImageForModal(item);
+    setImageForModal(newItem);
   }
 
   return (
