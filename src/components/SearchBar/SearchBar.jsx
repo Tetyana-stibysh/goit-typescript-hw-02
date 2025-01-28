@@ -1,9 +1,9 @@
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import s from './SearchBar.module.css';
 import { TbPhotoSearch } from 'react-icons/tb';
 
 const SearchBar = ({ onSearch }) => {
-  const handelSubmit = e => {
+  const handleSubmit = e => {
     e.preventDefault();
     const { value } = e.target.elements.text;
     if (!value) {
@@ -11,12 +11,12 @@ const SearchBar = ({ onSearch }) => {
       return;
     }
     onSearch(value);
-    e.target.reset();
+    // e.target.reset();
   };
 
   return (
     <header className={s.header}>
-      <form className={s.wrapper} onSubmit={handelSubmit}>
+      <form className={s.wrapper} onSubmit={handleSubmit}>
         <button className={s.button} type="submit">
           <TbPhotoSearch className={s.icon} />
         </button>
@@ -27,18 +27,6 @@ const SearchBar = ({ onSearch }) => {
           autoComplete="off"
           autoFocus
           placeholder="Search images and photos"
-        />
-        <Toaster
-          position="top-right"
-          toastOptions={{
-            duration: 3000,
-            removeDelay: 1000,
-            style: {
-              background: '#c8c0c0',
-              color: '#cb2323',
-              fontWeight: ' 600',
-            },
-          }}
         />
       </form>
     </header>

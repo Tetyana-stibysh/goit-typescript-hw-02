@@ -7,18 +7,48 @@ import ErrorMessage from './components/ErrorMessage/ErrorMessage';
 import LoadMoreBtn from './components/LoadMoreBtn/LoadMoreBtn';
 import Modal from 'react-modal';
 import ImageModal from './components/ImageModal/ImageModal';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
+import { set } from 'date-fns';
 
 Modal.setAppElement('#root');
 function App() {
   const [query, setQuery] = useState('');
-  const [images, setArrImages] = useState([]);
+  const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-  const [click, setClick] = useState(1);
-  const [pages, setPages] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [page, setPages] = useState(0);
   const [modalIsOpen, setIsOpen] = useState(false);
   const [imageForModal, setImageForModal] = useState({});
+
+  const handleSearch = newQuery => {
+    setQuery(newQuery);
+    setImages([]);
+    setPages(1);
+  };
+
+  useEffect(() => {
+    if (!query) return;
+    const fetchImages = async () => {
+      try {
+        setError(false);
+        setLoading(true);
+        const response = await fetchData(query, page);
+        // const newImgs = response.results;
+        console.log(response);
+        setTotalPages(response.total_pages);
+        setImages(prev => [...prev, ...response.results]);
+      } catch (error) {
+        setError(true);
+      } finally {
+        setLoading(false);
+        if (page === totalPages) {
+          toast('End of collection!!');
+        }
+      }
+    };
+    fetchImages();
+  }, [query, page, totalPages]);
 
   function openModal(item) {
     if (!modalIsOpen) {
@@ -27,90 +57,22 @@ function App() {
     setImageForModal(item);
   }
 
-  function closeModal() {
-    setIsOpen(false);
-  }
-  const handleSearch = async (query, click) => {
-    if (!query) {
-      return;
-    }
-    setQuery(query);
-    try {
-      setArrImages([]);
-      setError(false);
-      setLoading(true);
-      const dataImg = await fetchData(query, click);
-      setPages(dataImg.total_pages);
-      setArrImages(dataImg.results);
-      if (dataImg.total_pages === 1) {
-        toast('End of collection!!');
-      }
-    } catch (error) {
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    async function fetchNextPage() {
-      if (click === 1) {
-        return;
-      }
-
-      try {
-        setError(false);
-        setLoading(true);
-        const response = await fetchData(query, click);
-        const newImg = response.results;
-        setArrImages(prevArr => {
-          return [...prevArr, ...newImg];
-        });
-      } catch (error) {
-        setError(true);
-      } finally {
-        setLoading(false);
-        if (pages === click) {
-          toast('End of collection!!');
-        }
-      }
-    }
-    fetchNextPage();
-  }, [click, query, pages]);
-  const handleClickLoad = () => {
-    setClick(click + 1);
-  };
-
   return (
     <div>
       <SearchBar onSearch={handleSearch} />
-
       {images.length > 0 && <ImageGallery arr={images} openModal={openModal} />}
       {loading && <Loader />}
       {error && <ErrorMessage />}
-      {pages > 1 && pages !== click && (
-        <LoadMoreBtn handleClick={handleClickLoad} />
+      {totalPages > 1 && page !== totalPages && (
+        <LoadMoreBtn handleClick={() => setPages(prev => prev + 1)} />
       )}
       {modalIsOpen && (
         <ImageModal
           image={imageForModal}
           isOpen={modalIsOpen}
-          closeModal={closeModal}
+          closeModal={() => setIsOpen(false)}
         />
       )}
-
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          duration: 3000,
-          removeDelay: 1000,
-          style: {
-            background: '#c8c0c0',
-            color: '#cb2323',
-            fontWeight: ' 600',
-          },
-        }}
-      />
     </div>
   );
 }

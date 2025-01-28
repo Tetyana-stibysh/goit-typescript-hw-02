@@ -15,13 +15,3 @@ export const fetchData = async (query, nextPage) => {
   });
   return response.data;
 };
-// const doStuff = async () => {
-//   try {
-//     const users = await fetchData('cat', 2);
-//     console.log(users.results);
-//   } catch (error) {
-//     console.log(error.message);
-//   }
-// };
-
-// doStuff();
