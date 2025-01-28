@@ -33,9 +33,6 @@ function App() {
         const { results, total_pages } = await fetchData(query, page);
         setTotalPages(total_pages);
         setImages(prevImgs => [...prevImgs, ...results]);
-
-        console.log(page);
-        console.log(totalPages);
       } catch (error) {
         setError(true);
       } finally {
