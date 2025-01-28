@@ -37,9 +37,6 @@ function App() {
         setError(true);
       } finally {
         setLoading(false);
-        if (page === totalPages) {
-          toast('End of collection!!');
-        }
       }
     };
     fetchImages();
