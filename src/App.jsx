@@ -31,20 +31,24 @@ function App() {
         setError(false);
         setLoading(true);
         const { results, total_pages } = await fetchData(query, page);
-        setImages(prevImgs => [...prevImgs, ...results]);
         setTotalPages(total_pages);
+        setImages(prevImgs => [...prevImgs, ...results]);
+
+        console.log(page);
+        console.log(totalPages);
       } catch (error) {
         setError(true);
       } finally {
         setLoading(false);
-        if (page === totalPages) {
-          toast('End of collection!!');
-        }
       }
     };
     fetchImages();
   }, [query, page]);
-
+  useEffect(() => {
+    if (page === totalPages) {
+      toast('End of collection!!');
+    }
+  }, [totalPages, page]);
   function openModal(newItem) {
     if (!modalIsOpen) {
       setIsOpen(true);
