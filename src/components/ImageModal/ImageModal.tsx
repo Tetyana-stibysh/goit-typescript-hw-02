@@ -1,16 +1,24 @@
 import s from './ImageModal.module.css';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow } from '../../../node_modules/date-fns/formatDistanceToNow';
 import Modal from 'react-modal';
+import { Image } from '../../App.types';
+import React, { MouseEvent } from 'react';
 Modal.setAppElement('#root');
-const ImageModal = ({ image, closeModal, isOpen }) => {
-  const {
-    alt_description,
-    user: { name },
-    created_at,
-    urls: { regular },
-  } = image;
-  const result = formatDistanceToNow(new Date(created_at));
-  const handleClick = e => {
+type ImageModalProps = {
+  image: Image | null;
+  isOpen: boolean;
+  closeModal: () => void;
+};
+const ImageModal: React.FC<ImageModalProps> = ({
+  image,
+  closeModal,
+  isOpen,
+}) => {
+  if (!image || !image.created_at) {
+    return;
+  }
+  const result = formatDistanceToNow(new Date(image?.created_at));
+  const handleClick = (e: MouseEvent<HTMLDivElement>): void => {
     if (e.target === e.currentTarget) {
       closeModal();
     }
@@ -22,21 +30,21 @@ const ImageModal = ({ image, closeModal, isOpen }) => {
         <div className={s.modal}>
           <img
             className={s.img}
-            src={regular}
-            alt={alt_description}
+            src={image?.urls.regular}
+            alt={image?.alt_description}
             width="960"
             height="460"
           />
           <ul className={s.wrapper}>
             <li className={s.item}>
-              {!alt_description ? (
+              {!image?.alt_description ? (
                 'Beautiful photo'
               ) : (
-                <p className={s.text}>{alt_description}</p>
+                <p className={s.text}>{image?.alt_description}</p>
               )}
             </li>
             <li className={s.item}>
-              <p className={s.text}>author: {name}</p>
+              <p className={s.text}>author: {image?.user.name}</p>
             </li>
             <li className={s.item}>
               <p className={s.text}>Created {result} ago</p>

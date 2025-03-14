@@ -1,17 +1,28 @@
 import toast from 'react-hot-toast';
 import s from './SearchBar.module.css';
 import { TbPhotoSearch } from 'react-icons/tb';
-
-const SearchBar = ({ onSearch }) => {
-  const handleSubmit = e => {
+import React, { ChangeEvent, FormEvent } from 'react';
+type SearchBarProps = {
+  onSearch: (newQuery: string) => void;
+};
+const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    const { value } = e.target.elements.text;
+    const target = e.target as HTMLFormElement;
+    const textElement = target.elements.namedItem(
+      'text'
+    ) as HTMLInputElement | null;
+
+    if (!textElement) {
+      toast('Text input element not found.');
+      return;
+    }
+    const value = textElement.value;
     if (!value) {
       toast('Fill out the search form, please!!');
       return;
     }
     onSearch(value);
-    // e.target.reset();
   };
 
   return (
